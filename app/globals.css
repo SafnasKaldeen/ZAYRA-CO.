@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F6F1E8;
+  color: #2A2A2A;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default focus outline, replace with brand style */
+*:focus-visible {
+  outline: 1px solid #C6A75E;
+  outline-offset: 2px;
+}
+
+/* Bottom-border only inputs */
+.input-underline {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #0F3D2E;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  color: #2A2A2A;
+  transition: border-color 0.3s ease;
+}
+.input-underline::placeholder {
+  color: #2A2A2A;
+  opacity: 0.5;
+}
+.input-underline:focus {
+  outline: none;
+  border-bottom-color: #0F3D2E;
+}
+textarea.input-underline {
+  resize: none;
+  min-height: 80px;
+}
