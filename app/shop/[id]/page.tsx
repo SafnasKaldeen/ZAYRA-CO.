@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { shopProducts } from '../../../lib/shopProducts';
+import { shopProducts } from '../../../lib/products'
 import ProductCard from '../../../components/ProductCard';
 import { ChevronDown, Sparkles } from 'lucide-react';
 
