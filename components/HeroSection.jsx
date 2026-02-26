@@ -13,8 +13,15 @@ export default function HeroSection() {
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center px-6"
-      style={{ backgroundColor: '#0F3D2E' }}
+      style={{
+        backgroundImage: "url('/Hero Banner.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
+      {/* Blurred overlay */}
+      <div className="absolute inset-0 backdrop-blur-sm bg-black/20" />
       {/* Glow */}
       <div
         className="absolute inset-0 pointer-events-none"
