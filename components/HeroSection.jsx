@@ -21,7 +21,7 @@ export default function HeroSection() {
       }}
     >
       {/* Blurred overlay */}
-      <div className="absolute inset-0 backdrop-blur-sm bg-black/20" />
+      <div className="absolute inset-0 backdrop-blur-sm bg-emerald/20" />
       {/* Glow */}
       <div
         className="absolute inset-0 pointer-events-none"
