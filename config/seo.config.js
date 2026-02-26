@@ -8,7 +8,7 @@ export const siteConfig = {
   name:        'ZAYRA CO.',
   tagline:     'Luxury in Every Layer.',
   description: 'Premium modest wear fashion house from Sri Lanka. Discover curated collections crafted for the modern woman.',
-  url:         'https://zayraco.com',         // ← update to your live domain
+  url:         'https://zayra-co.vercel.app',         // ← update to your live domain
   locale:      'en_US',
 
   ogImage: {
