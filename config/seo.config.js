@@ -108,7 +108,7 @@ export function buildProductMetadata(product) {
       title:       product.name,
       description: product.description,
       path:        `/shop/${product.slug}`,
-      type:        'product',                 // OG type: product
+      type:        'website',        // ← was 'product', not supported by Next.js
       image:       image
         ? {
             url:    image.url,
@@ -119,19 +119,16 @@ export function buildProductMetadata(product) {
         : undefined,
     }),
 
-    // Product-specific OG fields (Facebook/WhatsApp pick these up)
     openGraph: {
       ...buildMetadata({ path: `/shop/${product.slug}` }).openGraph,
       title:       `${product.name} | ${siteConfig.name}`,
       description: product.description,
       url:         `${siteConfig.url}/shop/${product.slug}`,
-      type:        'product',
+      type:        'website',        // ← was 'product', not supported by Next.js
       images:      image
         ? [{ url: image.url, width: image.width || 1200, height: image.height || 1200, alt: product.name }]
         : [siteConfig.ogImage],
     },
-
-    // JSON-LD injected via the page component (see example page below)
   };
 }
 
