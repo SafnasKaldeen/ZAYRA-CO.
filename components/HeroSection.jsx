@@ -1,6 +1,7 @@
 // components/HeroSection.jsx
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function HeroSection() {
@@ -23,10 +24,24 @@ export default function HeroSection() {
       />
 
       {/* Push content below tall navbar */}
-      <div
-        className="relative z-10 flex flex-col items-center w-full"
-        style={{ marginTop: '200px' }}
-      >
+      <div className="relative z-10 flex flex-col items-center w-full mt-[50px] md:mt-[200px]">
+        {/* Mobile-only logo */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="md:hidden mb-6"
+        >
+          <Image 
+              src='/icon.png' 
+              alt="Alzia Logo"
+              width={300}
+              height={300}
+              className="w-60 h-60 object-contain"
+              priority
+          />
+        </motion.div>
+
         {/* Tagline */}
         <motion.p
           initial={{ opacity: 0, y: 18 }}
@@ -69,19 +84,10 @@ export default function HeroSection() {
         >
           <Link
             href="/collections"
-            className="inline-block font-sans text-xs uppercase tracking-widest px-8 py-3.5"
+            className="inline-block font-sans text-xs uppercase tracking-widest px-8 py-3.5 rounded-sm hover:bg-[#C6A75E]/10 transition-all duration-300"
             style={{
               color: '#F6F1E8',
               border: '1px solid rgba(198,167,94,0.55)',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.color = '#C6A75E';
-              e.currentTarget.style.borderColor = '#C6A75E';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.color = '#F6F1E8';
-              e.currentTarget.style.borderColor = 'rgba(198,167,94,0.55)';
             }}
           >
             Explore the Collection
