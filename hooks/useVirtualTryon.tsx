@@ -58,8 +58,8 @@ export function useVirtualTryOn() {
 
     try {
       const formData = new FormData();
-      formData.append('garment', garmentFile);
-      formData.append('person',  personFile);
+      formData.append('person', garmentFile);
+      formData.append('garment',  personFile);
 
       const response = await fetch('/api/virtual-tryon', {
         method: 'POST',
