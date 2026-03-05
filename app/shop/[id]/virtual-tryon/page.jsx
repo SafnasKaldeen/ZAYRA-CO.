@@ -1,4 +1,3 @@
-// app/shop/[id]/virtual-tryon/page.jsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,7 +10,7 @@ import {
   CheckCircle2, AlertTriangle, Sparkles, X,
 } from 'lucide-react';
 import { shopProducts } from '../../../../lib/products';
-import { useVirtualTryOn } from '../../../../hooks/useVirtualTryon'
+import { useVirtualTryOn } from '../../../../hooks/useVirtualTryon';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const processingSteps = [
@@ -25,7 +24,6 @@ const processingSteps = [
   { label: 'Finalising result',         time: '2–3s'   },
 ];
 
-// Real step timings matching the actual API processing time
 const STEP_TIMINGS = [1000, 10000, 8000, 16000, 20000, 30000, 7000, 2500];
 
 const tips = [
@@ -128,27 +126,17 @@ export default function VirtualTryOnPage() {
   const product = shopProducts.find(p => p.id === id);
   if (!product) notFound();
 
-  // ── Real hook ───────────────────────────────────────────────────────────────
   const { result, loading, error, generateTryOn, reset } = useVirtualTryOn();
 
-  // ── State ───────────────────────────────────────────────────────────────────
-  const [personFile,     setPersonFile]     = useState(null);
-  const [personPreview,  setPersonPreview]  = useState(null);
-  const [garmentFile,    setGarmentFile]    = useState(null);
-  const [garmentPreview, setGarmentPreview] = useState(product.image);
+  const [personFile,    setPersonFile]    = useState(null);
+  const [personPreview, setPersonPreview] = useState(null);
+
+  // ✅ Garment is just the URL string — no fetch/blob conversion needed
+  const garmentUrl     = product.image;
+  const garmentPreview = product.image;
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [elapsedTime,      setElapsedTime]       = useState(0);
-
-  // Pre-load product image as File
-  useEffect(() => {
-    (async () => {
-      try {
-        const res  = await fetch(product.image);
-        const blob = await res.blob();
-        setGarmentFile(new File([blob], 'garment.jpg', { type: 'image/jpeg' }));
-      } catch { /* non-critical */ }
-    })();
-  }, [product.image]);
 
   // Elapsed timer
   useEffect(() => {
@@ -158,7 +146,7 @@ export default function VirtualTryOnPage() {
     return () => clearInterval(t);
   }, [loading]);
 
-  // Step progress tied to real timings
+  // Step progress
   useEffect(() => {
     if (!loading) { setCurrentStepIndex(0); return; }
     let total = 0;
@@ -179,7 +167,6 @@ export default function VirtualTryOnPage() {
     return m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
   };
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
   const handlePersonUpload = e => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -187,31 +174,17 @@ export default function VirtualTryOnPage() {
     setPersonPreview(URL.createObjectURL(file));
   };
 
-  const handleGarmentUpload = e => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setGarmentFile(file);
-    setGarmentPreview(URL.createObjectURL(file));
-  };
-
+  // ✅ Pass garmentUrl (string) + personFile (File) to the hook
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!garmentFile || !personFile) return;
-    await generateTryOn(garmentFile, personFile);
+    if (!garmentUrl || !personFile) return;
+    await generateTryOn(garmentUrl, personFile);
   };
 
   const resetAll = () => {
     setPersonFile(null);
     setPersonPreview(null);
-    setGarmentPreview(product.image);
     reset();
-    ;(async () => {
-      try {
-        const res  = await fetch(product.image);
-        const blob = await res.blob();
-        setGarmentFile(new File([blob], 'garment.jpg', { type: 'image/jpeg' }));
-      } catch { /* non-critical */ }
-    })();
   };
 
   const handleDownload = () => {
@@ -223,7 +196,6 @@ export default function VirtualTryOnPage() {
     document.body.removeChild(a);
   };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <>
       {/* ── Breadcrumb ─────────────────────────────── */}
@@ -270,18 +242,19 @@ export default function VirtualTryOnPage() {
         <div className="max-w-5xl mx-auto">
 
           <form onSubmit={handleSubmit}>
-            {/* ── Upload panels ──────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+              {/* Garment — locked, shows product image directly */}
               <UploadZone
                 label="Garment"
                 sublabel="Pre-filled"
                 preview={garmentPreview}
-                fileName={garmentFile?.name ?? product.name}
+                fileName={product.name}
                 icon={Sparkles}
-                onUpload={handleGarmentUpload}
-                onRemove={() => { setGarmentFile(null); setGarmentPreview(null); }}
-                locked={true}   // ← was false
+                onUpload={() => {}}
+                onRemove={() => {}}
+                locked={true}
               />
+              {/* Person photo — user uploads */}
               <UploadZone
                 label="Your Photo"
                 preview={personPreview}
@@ -293,14 +266,12 @@ export default function VirtualTryOnPage() {
               />
             </div>
 
-            {/* Divider */}
             <div className="mb-10" style={{ height: '1px', backgroundColor: 'rgba(198,167,94,0.2)' }} />
 
-            {/* ── CTAs ───────────────────────────── */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 type="submit"
-                disabled={loading || !garmentFile || !personFile}
+                disabled={loading || !personFile}
                 className="font-sans text-[11px] uppercase tracking-widest px-12 py-4 flex items-center gap-3 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#0F3D2E', color: '#F6F1E8', border: '1px solid #0F3D2E' }}
                 onMouseEnter={e => { if (!e.currentTarget.disabled) { e.currentTarget.style.backgroundColor = '#C6A75E'; e.currentTarget.style.borderColor = '#C6A75E'; } }}
@@ -358,7 +329,7 @@ export default function VirtualTryOnPage() {
                     Backup Model Used
                   </p>
                   <p className="font-sans text-sm font-light leading-relaxed" style={{ color: 'rgba(42,42,42,0.7)' }}>
-                    Our premium AI model is temporarily unavailable. For best results, use a clear frontal photo with good lighting and a plain background. Try again in a few minutes for premium quality.
+                    Our premium AI model is temporarily unavailable. Try again in a few minutes for premium quality.
                   </p>
                 </div>
               </motion.div>
@@ -372,7 +343,6 @@ export default function VirtualTryOnPage() {
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                 className="mt-16 max-w-xl mx-auto"
               >
-                {/* Timer */}
                 <div className="text-center mb-8">
                   <p className="font-sans text-[10px] uppercase tracking-widest mb-2" style={{ color: 'rgba(198,167,94,0.7)' }}>
                     Generating your look
@@ -385,7 +355,6 @@ export default function VirtualTryOnPage() {
                   </p>
                 </div>
 
-                {/* Gold progress bar */}
                 <div className="mb-10 overflow-hidden" style={{ height: '1px', backgroundColor: 'rgba(198,167,94,0.15)' }}>
                   <motion.div
                     animate={{ width: `${progress}%` }}
@@ -394,7 +363,6 @@ export default function VirtualTryOnPage() {
                   />
                 </div>
 
-                {/* Steps list */}
                 <div className="space-y-px">
                   {processingSteps.map((step, i) => {
                     const done   = i < currentStepIndex;
@@ -440,7 +408,6 @@ export default function VirtualTryOnPage() {
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="mt-16"
               >
-                {/* Header */}
                 <div className="text-center mb-10">
                   <p className="font-sans text-[10px] uppercase tracking-widest mb-3" style={{ color: 'rgba(198,167,94,0.7)' }}>
                     Your Result
@@ -456,7 +423,6 @@ export default function VirtualTryOnPage() {
                   </div>
                 </div>
 
-                {/* Side-by-side */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-10">
                   <div>
                     <p className="font-sans text-[10px] uppercase tracking-widest mb-3 text-center" style={{ color: 'rgba(42,42,42,0.45)' }}>
@@ -483,7 +449,6 @@ export default function VirtualTryOnPage() {
                   </div>
                 </div>
 
-                {/* Action buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <button
                     onClick={handleDownload}
